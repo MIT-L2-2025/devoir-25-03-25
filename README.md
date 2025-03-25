@@ -1,15 +1,15 @@
-#Devoir System
+# Devoir System
 Un programme en C qui lit les fichiers à partir d'un répertoire sélectionné aléatoirement parmi /etc/, /var/log/ et /usr/local/, puis affiche les informations suivantes dans un tableau HTML :
      >Taille de chaque fichier dans le rep sélectionné 
      >ID du chaque fichier
      >Sa Position sur le disque
 
-##compilation
+## Compilation
 pour compiler le programme 
 ```bash
 gcc info_files.c -o info
 ```
-##utilisation
+## Uilisation
 Exécutez le programme en mode root :
 ```bash
 sudo ./info
