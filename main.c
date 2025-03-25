@@ -44,7 +44,7 @@ int main() {
     pclose(list_file);
 
     if (file_treated != line_count) {
-        printf("Attention : %d fichiers collectés au lieu de %d comptés\n", file_treated, line_count);
+        printf("Attention : %d fichiers collectes au lieu de %d comptes\n", file_treated, line_count);
     }
 
     // Génération des fichiers HTML
@@ -86,7 +86,7 @@ int main() {
         return 1;
     }
     sort_by_size(files, file_treated);
-    html_head(html_size, dir, "taille");
+    html_head(html_size, dir, "Taille");
     for (int i = 0; i < file_treated; i++) {
         html_line(html_size, &files[i]);
     }
