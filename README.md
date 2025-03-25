@@ -1,4 +1,4 @@
-# Devoir en Programamtion Systeme
+# Devoir en Programmtion Systeme
 
 Ce programme génère un fichier HTML listant les fichiers d'un répertoire sélectionné aléatoirement parmi `/etc/`, `/var/log/`, ou `/usr/local`. Il inclut des informations sur le nom, l'ID, la taille et la position sur le disque de chaque fichier.
 
