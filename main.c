@@ -1,183 +1,97 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <time.h>
-#include <dirent.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <dirent.h>  
-#include <string.h>
+#include "sys.h"
 
-/*void get_physical_blocks(const char *filepath, ino_t inode) {
-    char command[512];
-    char device[128] = {0};
+int main() {
+    FILE *html_sorted_inode = NULL;
+    FILE *html_sorted_name = NULL;
+    About_file *files = NULL;
+    int line_count,                                 //nombre de fichier a traiter
+        file_treated;                               //nombre de fichier réellement traitée
+    char *dir;
 
-    snprintf(command, sizeof(command), "df \"%s\" | tail -1 | awk '{print $1}'", filepath);
-    FILE *mounts = popen(command, "r");
-    if (mounts == NULL) {
-        perror("Erreur df");
-        return;
+    dir = pick_dir();
+    printf("dossier: %s\n", dir);
+
+    // Premier ouverture pipe: compter les fichiers dans le dossier
+    FILE *list_file = get_list_file(dir);
+    if (list_file == NULL) {
+        printf("Erreur lors de la première ouverture du pipe\n");
+        return 1;
     }
-    if (fgets(device, sizeof(device), mounts) == NULL) {
-        fprintf(stderr, "Erreur lecture périphérique\n");
-        pclose(mounts);
-        return;
-    }
-    pclose(mounts);
-    device[strcspn(device, "\n")] = 0; // Supprime le \n
+    line_count = count_line(list_file);
+    pclose(list_file);
 
-    if (strlen(device) == 0) {
-        fprintf(stderr, "Périphérique non trouvé\n");
-        return;
+    if (line_count <= 0) {
+        printf("Aucun fichier trouvé ou erreur de comptage\n");
+        return 1;
     }
 
-   
-    snprintf(command, sizeof(command), "echo 'stat <%ld>' | debugfs -R %s 2>/dev/null", (long)inode, device);
-    FILE *debugfs = popen(command, "r");
-    if (debugfs == NULL) {
-        perror("Erreur debugfs");
-        return;
+   files = malloc(line_count * sizeof(About_file));
+    if (files == NULL) {
+        printf("Erreur d'allocation mémoire\n");
+        return 1;
     }
 
-   
-    char line[1024];
-    while (fgets(line, sizeof(line), debugfs)) {
-        if (strstr(line, "BLOCKS:")) {
-            printf("  Blocs physiques : %s", line);
-            break;
-        }
+    // Seconde ouverture pipe : collecter les fichiers
+    list_file = get_list_file(dir);
+    if (list_file == NULL) {
+        printf("Erreur lors de la seconde ouverture du pipe\n");
+        free(files);
+        return 1;
     }
-    pclose(debugfs);
-}*/
-void get_physical_blocks(const char *filepath, ino_t inode, FILE *html_file) {
-    char command[512];
-    char device[128] = {0};
+    file_treated = collect_from_files(list_file, files);
+    pclose(list_file);
 
-    // Exécution de la commande df pour obtenir le périphérique de montage
-    snprintf(command, sizeof(command), "df \"%s\" | tail -1 | awk '{print $1}'", filepath);
-    FILE *mounts = popen(command, "r");
-    if (mounts == NULL) {
-        perror("Erreur df");
-        return;
+    if (file_treated != line_count) {
+        printf("Attention : %d fichiers collectés au lieu de %d comptés\n", file_treated, line_count);
     }
 
-    if (fgets(device, sizeof(device), mounts) == NULL) {
-        fprintf(stderr, "Erreur lecture périphérique\n");
-        pclose(mounts);
-        return;
+    // Génération des fichiers HTML
+    // 1. Tri par inode (facultatif)
+    html_sorted_inode = fopen("sorted_by_inode.html", "w");
+    if (html_sorted_inode == NULL) {
+        printf("erreur ouverture du fichier html (inodes)\n");
+        free(files);
+        return 1;
     }
-    pclose(mounts);
-    device[strcspn(device, "\n")] = 0; // Supprime le \n
-
-    if (strlen(device) == 0) {
-        fprintf(stderr, "Périphérique non trouvé\n");
-        return;
+    sort_by_inode(files, file_treated);
+    html_head(html_sorted_inode, dir, "Inode");
+    for (int i = 0; i < file_treated; i++) {
+        html_line(html_sorted_inode, &files[i]);    //insérer dans le fichier html
     }
+    html_foot(html_sorted_inode);
+    fclose(html_sorted_inode);
 
-    // Exécution de la commande debugfs pour obtenir des informations sur l'inode
-    snprintf(command, sizeof(command), "echo 'stat <%ld>' | debugfs -R %s 2>/dev/null", (long)inode, device);
-    FILE *debugfs = popen(command, "r");
-    if (debugfs == NULL) {
-        perror("Erreur debugfs");
-        return;
+    // 2. Tri par nom
+    html_sorted_name = fopen("sorted_by_name.html", "w");
+    if (html_sorted_name == NULL) {
+        printf("erreur ouverture du fichier html (nom)\n");
+        free(files);
+        return 1;
     }
-
-    char line[1024];
-    int blocks_found = 0;
-    while (fgets(line, sizeof(line), debugfs)) {
-        if (strstr(line, "BLOCKS:")) {
-            // Ajouter les blocs physiques dans le fichier HTML
-            fprintf(html_file, "<td>%s</td></tr>\n", line);
-            blocks_found = 1;
-            break;
-        }
+    sort_by_name(files, file_treated);
+    html_head(html_sorted_name, dir, "Name");
+    for (int i = 0; i < file_treated; i++) {
+        html_line(html_sorted_name, &files[i]);
     }
+    html_foot(html_sorted_name);
+    fclose(html_sorted_name);
 
-    if (!blocks_found) {
-        //fprintf(html_file, "<td>Aucun bloc trouvé</td></tr>\n");
+    // 3. Tri par taille (facultatif)
+    FILE *html_size = fopen("sorted_by_size.html", "w");
+    if (html_size == NULL) {
+        printf("erreur ouverture du fichier html (taille)\n");
+        free(files);
+        return 1;
     }
-
-    pclose(debugfs);
+    sort_by_size(files, file_treated);
+    html_head(html_size, dir, "Size");
+    for (int i = 0; i < file_treated; i++) {
+        html_line(html_size, &files[i]);
+    }
+    html_foot(html_size);
+    fclose(html_size);
+    free(files);
+    return 0;
 }
-int main(int argc, char**argv)
-{
-	//données
-	int index;
-	char *rep[] = {"/etc", "/usr/local", "/var/log"};      // Tableau des dossiers
-	struct stat st;
-    struct tm *temps;
-    DIR *dir;
-    struct dirent *entry;
-	//choix aléatoire des dossier à parcourir
-	
-    srand(time(NULL)); 						 			// Initialisation du générateur de nombres aléatoires
-	index = rand() % 3;									// Choisir un indice aléatoire entre 0 et 2
-	printf("Dossier choisi : %s\n", rep[index]);		// Afficher le répertoire  choisi
-    //fichier HTML
-    FILE *html_file = fopen("affichage.html", "w");
-    if (html_file == NULL) {
-        perror("Erreur d'ouverture du fichier HTML");
-        exit(1);
-    }
-     // Début du fichier HTML
-    fprintf(html_file, "<html>\n<head>\n<title>Informations des fichiers</title>\n</head>\n<body>\n");
-    fprintf(html_file, "<h1>Liste des fichiers et répertoires</h1>\n");
-
-    // Début du tableau HTML
-    fprintf(html_file, "<table border='1'>\n");
-    fprintf(html_file, "<tr><th>Nom</th><th>Taille(octets)</th><th>ID</th><th>Position</th></tr>\n");
-	// Ouvrir le répertoire
-    dir = opendir(rep[index]);
-    if (dir == NULL) {
-        perror("Erreur d'accès au répertoire");
-        exit(1);
-    }
-
-		// Lire le contenu du répertoire
-		while ((entry = readdir(dir)) != NULL) {            
-        
-        if (entry->d_name[0] == '.') {					// Ignorer les répertoires spéciaux "." et ".."
-            continue;
-        }
-
-		// Construire le chemin absolu du fichier/dossier
-        char path[1024];
-        snprintf(path, sizeof(path), "%s/%s", rep[index], entry->d_name);
-
-        // Récupérer les informations sur le fichier/dossier
-        if (stat(path, &st) != 0) {
-            perror("Erreur d'accès au fichier");
-            continue;
-        }
-
-        printf("\nNom : %s\n", entry->d_name);
-		if (S_ISDIR(st.st_mode)) {
-            fprintf(html_file, "<td>%s</td>",entry->d_name);
-            fprintf(html_file, "<td>N/A</td>");
-        } 
-        else if (S_ISREG(st.st_mode)) {
-            fprintf(html_file, "<td>Fichier ordinaire</td>");
-            fprintf(html_file, "<td>%ld</td>", st.st_size);
-        } 
-        else {
-            fprintf(html_file, "<td>Autre</td>");
-            fprintf(html_file, "<td>%ld</td>",st.st_ino);
-        }
-
-			// Afficher l'ID d'inode
-        fprintf(html_file, "<td>%ld</td></tr>\n", st.st_ino);
-        get_physical_blocks(path, st.st_ino,html_file);
-    }
-
-       
-
-		
-    closedir(dir);                               // Fermer le répertoire
-	
-	
-	
-	
-	
-	
-	
-	return(0);
-	}
