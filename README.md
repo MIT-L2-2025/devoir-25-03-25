@@ -8,3 +8,7 @@ Utilisez la commande suivante pour compiler le programme :
 
 ```bash
 gcc -o export_file_info export_file_info.c
+```
+
+## Resultat
+![tableau](Screenshot_25-mars_19-14-00_17651.png)
