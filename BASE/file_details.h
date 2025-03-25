@@ -26,6 +26,7 @@
     #define TMP_FILE "/tmp/.tmp.txt"
     
     extern char *directories[3];
+
     typedef struct {
         int extent_number;
         int logic_start;
@@ -34,6 +35,7 @@
         int physic_end;
         int length;
     } extent_t;//bloc
+
     typedef struct fileStructure
     {
         char name[255];
@@ -41,21 +43,22 @@
         size_t filesize;
         extent_t position[CYLINDRE_NUMBER];
         int extendcount;
-    }fileStructure;
+    }fileStructure;//Info fichier
+
     /// 1. Recuperer l'ID de chaque fichier et sa taille et sa position dans le cylindre en disque
-        fileStructure recuperIdEtTailleEtPosition(bool generateHtml);
+    fileStructure recuperIdEtTailleEtPosition(bool generateHtml);
     
     //-------fonction utile dans la recuperation de taille , id et position---------//
-            int getNombreLigne();
-            int parse_filefrag_output(FILE *fp, extent_t extents[]);
-            int genarateurAleatoire(int start,int end);
-            char *getlinefile(int indexLine);
-            void generate_html(fileStructure files); 
-            fileStructure getdetails(char *fileRandom);
+    int getNombreLigne();
+    int parse_filefrag_output(FILE *fp, extent_t extents[]);
+    int genarateurAleatoire(int start,int end);
+    char *getlinefile(int indexLine);
+    void generate_html(fileStructure files); 
+    fileStructure getdetails(char *fileRandom);
     
     /// 2. Auquels moment les blocs se mette en colision dans une disque dure
-        void detect_collisions(fileStructure *files, int file_count);
+    void detect_collisions(fileStructure *files, int file_count);
 
-        //----detect de chevauchement------//
-        bool check_collision(extent_t *extent1, extent_t *extent2);
+    //----detect de chevauchement------//
+    bool check_collision(extent_t *extent1, extent_t *extent2);
 #endif
