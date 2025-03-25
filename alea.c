@@ -11,8 +11,14 @@ void headers_html(FILE *html,char* argv)
 
     fprintf(html, "<!DOCTYPE html>\n<html>\n<head>\n");
     fprintf(html, "<title>Listes dans - %s</title>\n", argv);
-    fprintf(html, "<style>table {border-collapse: collapse;} th, td {border: 1px solid black; padding: 8px;}</style>\n");
-    fprintf(html, "</head>\n<body>\n");
+    fprintf(html, "<style>"
+        "table {width: 100%%; border-collapse: collapse; font-family: Arial, sans-serif;}"
+        "th, td {border: 1px solid black; padding: 10px; text-align: left;}"
+        "th {background-color: #f2f2f2; font-weight: bold;}"
+        "tr:nth-child(even) {background-color: #f9f9f9;}"
+        "tr:hover {background-color: #f1f1f1;}"
+        "</style>\n");
+        fprintf(html, "</head>\n<body>\n");    fprintf(html, "</head>\n<body>\n");
     fprintf(html, "<h1>Liste des fichiers et repertoires du  %s</h1>\n", argv);
     fprintf(html, "<table>\n");
     fprintf(html, "<tr><th>Nom du fichier  </th><th>Taille (octets)</th><th>Position dans le Cylindre </th><th>ID (Inode)</th></tr>\n");
