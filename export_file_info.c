@@ -7,6 +7,7 @@
 #include <dirent.h>
 #include <fcntl.h>
 #include <linux/fs.h>
+#include <unistd.h>
 
 const char* directories[] = { "/etc/", "/var/log/", "/usr/local" };
 

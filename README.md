@@ -10,5 +10,13 @@ Utilisez la commande suivante pour compiler le programme :
 gcc -o export_file_info export_file_info.c
 ```
 
+## Execution
+
+Executez le programme en tant qu'admin pour obtenir les infos nécessaires
+
+```bash
+sudo ./export_file_info
+```
+
 ## Resultat
 ![tableau](Screenshot_25-mars_19-14-00_17651.png)
