@@ -4,6 +4,7 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <time.h>
+#include <sys/ioctl.h>
 #include <dirent.h> // Pour opendir, readdir, closedir
 #include <string.h> // Pour strcat
 #include <fcntl.h>  // Pour open
