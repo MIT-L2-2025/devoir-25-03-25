@@ -11,7 +11,6 @@ int main()
 void fonction()
 {
     char cmd[200];
-    char line[256];
     const char* directory[] = {"/etc","/usr/local","/var/log"};
     srand(time(NULL));
     int index = rand() % 3;
