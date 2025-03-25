@@ -8,7 +8,7 @@
      * On prend une fichier au hasard soit dans /etc/ ou /usr/local ou
      * dans /var/log (<Tout est fichier ...>)
      * 1. Recuperer l'ID de chaque fichier et sa taille et sa position dans le cylindre en disque
-     * 2. Auquels moment les blocs se mette en colision dans une disque dure
+     * 2. A quels moment les blocs se mette en colision dans une disque dure (detect collision)
      */
 
     #include <stdio.h>
