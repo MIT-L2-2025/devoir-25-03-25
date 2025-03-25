@@ -71,7 +71,7 @@ int main() {
         return 1;
     }
     sort_by_name(files, file_treated);
-    html_head(html_sorted_name, dir, "Name");
+    html_head(html_sorted_name, dir, "Nom");
     for (int i = 0; i < file_treated; i++) {
         html_line(html_sorted_name, &files[i]);
     }
@@ -86,7 +86,7 @@ int main() {
         return 1;
     }
     sort_by_size(files, file_treated);
-    html_head(html_size, dir, "Size");
+    html_head(html_size, dir, "taille");
     for (int i = 0; i < file_treated; i++) {
         html_line(html_size, &files[i]);
     }
