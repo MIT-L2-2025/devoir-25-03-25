@@ -1,0 +1,122 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f4f4f9;
+    color: #333;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    padding: 20px;
+    overflow: hidden;
+}
+
+.table-container {
+    width: 100%;
+    max-width: 1300px;
+    height: 80vh;
+    overflow: auto;
+    border-radius: 12px;
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
+    background-color: #fff;
+    padding: 20px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+}
+
+th, td {
+    padding: 15px;
+    font-size: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #555;
+    transition: all 0.3s ease;
+}
+
+th {
+    background: linear-gradient(45deg, #5f7cfe, #536df6);
+    color: white;
+    text-align: center;
+    font-weight: 600;
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+}
+
+td {
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+}
+
+tr {
+    transition: background-color 0.3s ease;
+}
+
+tr:hover {
+    background-color: #e2e6f1;
+}
+
+td:hover {
+    background-color: #dde3f4;
+    color: #2e3d7a;
+}
+
+tr:nth-child(even) td {
+    background-color: #f1f1f1;
+}
+
+tr:nth-child(odd) td {
+    background-color: #fafafa;
+}
+
+/* Animations */
+@keyframes glow {
+    0% { box-shadow: 0 0 5px rgba(255, 255, 255, 0.6); }
+    50% { box-shadow: 0 0 15px rgba(85, 126, 254, 0.8); }
+    100% { box-shadow: 0 0 5px rgba(255, 255, 255, 0.6); }
+}
+
+table {
+    animation: glow 3s infinite alternate;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+    width: 10px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f0f0f0;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #5f7cfe;
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #536df6;
+}
+
+@media (max-width: 768px) {
+    body {
+        padding: 10px;
+    }
+
+    th, td {
+        padding: 12px;
+        font-size: 0.9rem;
+    }
+
+    .table-container {
+        padding: 15px;
+    }
+}
