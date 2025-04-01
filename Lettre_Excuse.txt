@@ -1,0 +1,12 @@
+Bonjour Monsieur,
+
+Je me permets de vous écrire pour vous informer que j’ai fait une erreur en déposant mon travail dans le mauvais repository GitHub. Au lieu de l’envoyer dans [devoir-25-03-2025], je l’ai accidentellement ajouté à [tp-11-03-2025] l'ancien devoir dans la branche RABENANDRASANA_Hanitsoa_Ayan.
+
+Je suis en train de rectifier cela et je vais transférer les fichiers dans le bon repository mais dans le repositorie que j'ai fait je les envoyer exactement avant 00h .
+
+Voici le lien https://github.com/MIT-L2-2025/tp-11-03-2025/blob/RABENANDRASANA_Hanitsoa_Ayan/devFile.c et  https://github.com/MIT-L2-2025/tp-11-03-2025/blob/RABENANDRASANA_Hanitsoa_Ayan/resultat.html
+
+Je vous prie de bien vouloir m’excuser pour cette confusion. Merci pour votre compréhension.
+
+Cordialement,
+RABENANDRASANA_Hanitsoa_Ayan étudiante L2-MIT
